@@ -2,6 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
+#include <QListWidgetItem>
+#include "model.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -15,7 +17,14 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+    void on_todoAddBtn_clicked();
+    void on_todoListWidget_itemDoubleClicked(QListWidgetItem *item);
+
 private:
     Ui::Widget *ui;
+
+    Model model;
+
 };
 #endif // WIDGET_H
