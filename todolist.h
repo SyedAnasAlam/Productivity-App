@@ -2,17 +2,17 @@
 #define TODOLIST_H
 
 #include <QVariant>
-#include "model.h"
+#include "database.h"
 
-class TodoList
+class TodoList : public Database
 {
 
-private:
-    Model __model;
-
 public:
-    TodoList(const Model & model);
+    TodoList();
     QStringList getTodoList();
+    bool addTask(QString taskDescription);
+    bool completeTask(int taskIndex);
+
 };
 
 #endif // TODOLIST_H

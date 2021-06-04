@@ -1,15 +1,29 @@
+#include <QDebug>
+#include <QtGui>
 #include "widget.h"
 #include "ui_widget.h"
-#include "model.h"
-
-#include<QDebug>
-#include<QtGui>
-#include<QGraphicsEllipseItem>
+#include "todolist.h"
 
 Widget::Widget(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
 {
     ui->setupUi(this);
-    ui->todoListWidget->addItems(model.getTodoList());
+    __todolist.openDatabase();
+    ui->todoListWidget->addItems(__todolist.getTodoList());
+}
+
+void Widget::on_todoAddBtn_clicked()
+{
+    QString newTaskDescription = ui->newTaskLineEdit->text();
+    __todolist.addTask(newTaskDescription);
+    ui->todoListWidget->addItem(newTaskDescription);
+}
+
+
+void Widget::on_todoListWidget_itemDoubleClicked()
+{
+    int taskIndex = ui->todoListWidget->currentRow();
+    __todolist.completeTask(taskIndex);
+    ui->todoListWidget->takeItem(taskIndex);
 }
 
 Widget::~Widget()
@@ -18,22 +32,8 @@ Widget::~Widget()
 }
 
 
-void Widget::on_todoAddBtn_clicked()
-{
-    QString newTaskDescription = ui->newTaskLineEdit->text();
-    model.addTaskTodoList(newTaskDescription);
-    ui->todoListWidget->addItem(newTaskDescription);
-}
-
-
-void Widget::on_todoListWidget_itemDoubleClicked(QListWidgetItem *item)
-{
-    int taskIdx = ui->todoListWidget->currentRow();
-    model.completeTaskTodoList(taskIdx);
-    ui->todoListWidget->takeItem(taskIdx);
-}
-
-/* QGraphicsScene * scene = new QGraphicsScene(ui->graphicsView);
+/* #include<QGraphicsEllipseItem>
+ * QGraphicsScene * scene = new QGraphicsScene(ui->graphicsView);
  QGraphicsEllipseItem * ellipse = new QGraphicsEllipseItem(0, 0, 200, 200);
  ellipse->setStartAngle(0);
  ellipse->setSpanAngle(90*16);

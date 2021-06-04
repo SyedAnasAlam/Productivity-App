@@ -2,9 +2,30 @@
 #include "Constants.h"
 #include "todolist.h"
 
-TodoList::TodoList(const Model & model) : __model(model) {}
+TodoList::TodoList() : Database("Todolist.json")
+{}
 
 QStringList TodoList::getTodoList()
 {
-    return __model.getDataFile()[todoListIdx].toVariant().toStringList();
+    QStringList stringTodoList;
+    for(QVariant v : __database.toVariantList())
+        stringTodoList.append(v.toString());
+
+    return stringTodoList;
 }
+
+bool TodoList::addTask(QString taskDescription)
+{
+    __database.append(taskDescription);
+    bool ret = saveDatabase();
+    return ret;
+}
+
+bool TodoList::completeTask(int taskIndex)
+{
+    __database.removeAt(taskIndex);
+    bool ret = saveDatabase();
+    return ret;
+}
+
+
