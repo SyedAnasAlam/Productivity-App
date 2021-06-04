@@ -7,11 +7,15 @@
 class Model
 {
 private:
-    QJsonArray jsonDataFile;
-    void saveDataFile();
+    QJsonArray __dataFile;
+    QString __dataFilePath;
+
 
 public:
     Model();
+    void saveDataFile(QJsonArray dataFile);
+    QJsonArray getDataFile();
+
     QStringList getTodoList();
     void addTaskTodoList(QString description);
     void completeTaskTodoList(int taskIdx);

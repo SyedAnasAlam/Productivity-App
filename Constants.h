@@ -2,8 +2,7 @@
 #define CONSTANTS_H
 
 #include <QString>
-
-const QString dataFilePath = "C:/Users/Saa03/Documents/SAA/Programmering/MyProjects/Productivity-App/Productivity-App/Data.json";
+#include <QApplication>
 
 const int todoListIdx = 0;
 
