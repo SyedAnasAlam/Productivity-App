@@ -2,19 +2,19 @@
 #include "Constants.h"
 #include "todolist.h"
 
-TodoList::TodoList() : Database("Todolist.json")
+TodoList::TodoList() : Database("TodoList")
 {}
 
 QStringList TodoList::getTodoList()
 {
     QStringList stringTodoList;
-    for(QVariant v : __database.toVariantList())
+    for(QVariant & v : __database.toVariantList())
         stringTodoList.append(v.toString());
 
     return stringTodoList;
 }
 
-bool TodoList::addTask(QString taskDescription)
+bool TodoList::addTask(const QString & taskDescription)
 {
     __database.append(taskDescription);
     bool ret = saveDatabase();

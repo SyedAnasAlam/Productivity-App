@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     database.cpp \
+    habittracker.cpp \
     main.cpp \
     todolist.cpp \
     widget.cpp
@@ -17,6 +18,7 @@ SOURCES += \
 HEADERS += \
     Constants.h \
     database.h \
+    habittracker.h \
     todolist.h \
     widget.h
 

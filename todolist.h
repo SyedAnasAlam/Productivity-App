@@ -10,7 +10,7 @@ class TodoList : public Database
 public:
     TodoList();
     QStringList getTodoList();
-    bool addTask(QString taskDescription);
+    bool addTask(const QString & taskDescription);
     bool completeTask(int taskIndex);
 
 };

@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QListWidgetItem>
 #include "todolist.h"
+#include "habittracker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Widget; }
@@ -25,6 +26,7 @@ private:
     Ui::Widget *ui;
 
     TodoList __todolist;
+    HabitTracker __habitTracker;
 
 
 

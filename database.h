@@ -7,7 +7,7 @@
 class Database
 {
 public:
-    Database(QString databaseName);
+    Database(const QString & databaseName);
     bool openDatabase();
     bool saveDatabase();
 

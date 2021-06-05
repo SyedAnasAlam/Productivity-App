@@ -3,12 +3,19 @@
 #include "widget.h"
 #include "ui_widget.h"
 #include "todolist.h"
+#include <QDate>
 
 Widget::Widget(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
 {
     ui->setupUi(this);
+
+    //Init
     __todolist.openDatabase();
+    __habitTracker.openDatabase();
+
+    //Drawing
     ui->todoListWidget->addItems(__todolist.getTodoList());
+
 }
 
 void Widget::on_todoAddBtn_clicked()

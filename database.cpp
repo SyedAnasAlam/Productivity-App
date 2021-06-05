@@ -6,7 +6,7 @@
 #include "database.h"
 
 
-Database::Database(QString databaseName) : __databasePath(QApplication::applicationDirPath() + "/Database/" + databaseName)
+Database::Database(const QString & databaseName) : __databasePath(QApplication::applicationDirPath() + "/Database/" + databaseName + ".json")
 {}
 
 bool Database::openDatabase()
@@ -18,7 +18,7 @@ bool Database::openDatabase()
 
     QJsonDocument jsonDataDoc = QJsonDocument::fromJson(dataFileContent.toUtf8());
     __database = jsonDataDoc.array();
-    qDebug() << "open" << ret;
+
     return ret;
 }
 
