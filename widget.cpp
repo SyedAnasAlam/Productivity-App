@@ -1,41 +1,32 @@
 #include <QDebug>
 #include <QtGui>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QLayout>
 #include "widget.h"
 #include "ui_widget.h"
 #include "todolist.h"
-#include <QDate>
 
-Widget::Widget(QWidget *parent) : QWidget(parent), ui(new Ui::Widget)
+
+Widget::Widget(QWidget *parent) : QWidget(parent)
 {
-    ui->setupUi(this);
-
     //Init
     __todolist.openDatabase();
     __habitTracker.openDatabase();
 
     //Drawing
-    ui->todoListWidget->addItems(__todolist.getTodoList());
+    QVBoxLayout * layout = new QVBoxLayout();
+    this->setLayout(layout);
+    QTabWidget * tabWidget = new QTabWidget(this);
+    layout->addWidget(tabWidget);
 
+    __todolist.draw(tabWidget);
 }
 
-void Widget::on_todoAddBtn_clicked()
-{
-    QString newTaskDescription = ui->newTaskLineEdit->text();
-    __todolist.addTask(newTaskDescription);
-    ui->todoListWidget->addItem(newTaskDescription);
-}
-
-
-void Widget::on_todoListWidget_itemDoubleClicked()
-{
-    int taskIndex = ui->todoListWidget->currentRow();
-    __todolist.completeTask(taskIndex);
-    ui->todoListWidget->takeItem(taskIndex);
-}
 
 Widget::~Widget()
 {
-    delete ui;
+
 }
 
 

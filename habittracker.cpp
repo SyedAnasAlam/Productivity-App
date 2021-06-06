@@ -1,4 +1,6 @@
 #include <QJsonObject>
+#include <QVBoxLayout>
+#include <QPushButton>
 #include "habittracker.h"
 
 HabitTracker::HabitTracker() : Database("HabitTracker")
@@ -33,3 +35,4 @@ bool HabitTracker::addHabit(const habit & habit)
 
     return ret;
 }
+

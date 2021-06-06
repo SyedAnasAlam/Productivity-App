@@ -2,13 +2,8 @@
 #define WIDGET_H
 
 #include <QWidget>
-#include <QListWidgetItem>
 #include "todolist.h"
 #include "habittracker.h"
-
-QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
-QT_END_NAMESPACE
 
 class Widget : public QWidget
 {
@@ -19,16 +14,14 @@ public:
     ~Widget();
 
 private slots:
-    void on_todoAddBtn_clicked();
-    void on_todoListWidget_itemDoubleClicked();
+    //void on_todoAddBtn_clicked();
+    //void on_todoListWidget_itemDoubleClicked();
 
 private:
-    Ui::Widget *ui;
-
     TodoList __todolist;
     HabitTracker __habitTracker;
 
 
-
 };
+
 #endif // WIDGET_H
