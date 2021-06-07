@@ -13,9 +13,6 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
-private slots:
-    //void on_todoAddBtn_clicked();
-    //void on_todoListWidget_itemDoubleClicked();
 
 private:
     TodoList __todolist;

@@ -21,6 +21,8 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     layout->addWidget(tabWidget);
 
     __todolist.draw(tabWidget);
+    __habitTracker.draw(tabWidget);
+
 }
 
 
@@ -29,12 +31,3 @@ Widget::~Widget()
 
 }
 
-
-/* #include<QGraphicsEllipseItem>
- * QGraphicsScene * scene = new QGraphicsScene(ui->graphicsView);
- QGraphicsEllipseItem * ellipse = new QGraphicsEllipseItem(0, 0, 200, 200);
- ellipse->setStartAngle(0);
- ellipse->setSpanAngle(90*16);
- scene->addItem(ellipse);
- ui->graphicsView->show();
- ui->graphicsView->setScene(scene);*/

@@ -5,6 +5,7 @@
 #include "Constants.h"
 #include "todolist.h"
 
+//---Back-End---//
 TodoList::TodoList() : Database("TodoList")
 {}
 
@@ -30,10 +31,12 @@ bool TodoList::completeTask(int taskIndex)
     bool ret = saveDatabase();
     return ret;
 }
+//--------------//
 
+//---Front-End---//
 void TodoList::draw(QTabWidget *parent)
 {
-    QWidget * window = new QWidget();
+    QWidget * window = this;
     QVBoxLayout * layout = new QVBoxLayout();
     window->setLayout(layout);
 
@@ -61,6 +64,7 @@ void TodoList::addTaskButton_clicked()
     QString newTaskDescription = __lineEdit->text();
     addTask(newTaskDescription);
     __listWidget->addItem(newTaskDescription);
+    __lineEdit->setText("");
 }
 
 void TodoList::tabWidgetItem_double_clicked()
@@ -69,5 +73,5 @@ void TodoList::tabWidgetItem_double_clicked()
     completeTask(taskIndex);
     __listWidget->takeItem(taskIndex);
 }
-
+//--------------//
 
