@@ -12,7 +12,6 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
 {
     //Init
     __todolist.openDatabase();
-    __habitTracker.openDatabase();
 
     //Drawing
     QVBoxLayout * layout = new QVBoxLayout();
@@ -21,7 +20,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     layout->addWidget(tabWidget);
 
     __todolist.draw(tabWidget);
-    __habitTracker.draw(tabWidget);
+    __habitTracker->draw(tabWidget);
 
 }
 

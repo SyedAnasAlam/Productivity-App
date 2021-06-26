@@ -4,20 +4,20 @@
 #include <QPushButton>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsRectItem>
+#include <QGraphicsTextItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QBrush>
 #include <QLabel>
+#include <QtMath>
+#include <QResizeEvent>
+#include <qevent.h>
 #include "habittracker.h"
 
 
-HabitTracker::HabitTracker() : Database("HabitTracker")
-{}
-
-QVector<habit> HabitTracker::getHabits()
+HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(parent)
 {
-    QVector<habit> habits;
-
+    openDatabase();
     for(QJsonValue && v : __database)
     {
         habit h;
@@ -25,11 +25,10 @@ QVector<habit> HabitTracker::getHabits()
         h.completed = v["completed"].toBool();
         h.startDay = v["startDay"].toInt();
         h.streak = v["streak"].toInt();
-        habits.append(h);
+        __habits.append(h);
     }
-
-    return habits;
 }
+
 
 bool HabitTracker::addHabit(const habit & habit)
 {
@@ -46,80 +45,79 @@ bool HabitTracker::addHabit(const habit & habit)
 
 void HabitTracker::drawGraphics()
 {
-    QVector<habit> habits = getHabits();
+    QGridLayout * layout = new QGridLayout();
 
     QBrush brush;
-    brush.setColor(Qt::green);
+    brush.setColor(*__PIE_COLOR);
     brush.setStyle(Qt::BrushStyle::SolidPattern);
 
-    QBrush brush2;
-    brush2.setColor(Qt::white);
-    brush2.setStyle(Qt::BrushStyle::SolidPattern);
+    int areaScreen = this->width() * this->height();
+    int count = __habits.size();
 
-    for(int i = 0; i < habits.size(); i++)
+    for(int i = 0; i < __habits.size(); i++)
     {
+        QLabel * descriptionLabel = new QLabel(__habits[i].description + " - " + QString::number(__habits[i].streak) + " / " + QString::number(66), this);
+        descriptionLabel->setAlignment(Qt::AlignCenter);
+        //QLabel * streakLabel = new QLabel(QString::number(__habits[i].streak), this);
+        //streakLabel->setAlignment(Qt::AlignCenter);
+
+        QPushButton * streakButton = new QPushButton("+", this);
+        connect(streakButton, &QPushButton::clicked, this, [=](){ streakButton_clicked(i); });
+
+        QVBoxLayout * subLayout = new QVBoxLayout();
         QGraphicsView * graphicsView = new QGraphicsView(this);
         graphicsView->setFrameShape(QFrame::NoFrame);
         QGraphicsScene * scene = new QGraphicsScene(graphicsView);
-        QGraphicsEllipseItem * ellipse1 = new QGraphicsEllipseItem(0, 0, __radius, __radius);
-        QGraphicsEllipseItem * ellipse2 = new QGraphicsEllipseItem(0, 0, __radius, __radius);
-        QVBoxLayout * subLayout = new QVBoxLayout();
 
-        QGraphicsRectItem * rect = new QGraphicsRectItem(0, 0, scene->width(), scene->height());
-        rect->setBrush(brush2);
+        int width = this->width();
+        int height = (this->height() - descriptionLabel->height() - streakButton->height())/__habits.size();
+        int radius = width < height ? width/2 : height/2;
 
-        scene->addItem(rect);
+        QGraphicsRectItem * r = new QGraphicsRectItem(0, 0, width, height);
+        QGraphicsEllipseItem * contour = new QGraphicsEllipseItem(0, 0, radius, radius);
+        QGraphicsEllipseItem * pie = new QGraphicsEllipseItem(0, 0, radius, radius);
+        pie->setStartAngle(0);
+        int angle = (__habits[i].streak/__MAX_STREAK) * 360;
+        pie->setSpanAngle(angle*16);
+        pie->setBrush(brush);
+        r->setBrush(brush);
 
-        ellipse2->setBrush(brush);
-        ellipse2->setStartAngle(0);
-        int angle = (habits[i].streak/66.0f) * 360;
-        ellipse2->setSpanAngle(angle*16);
+        //scene->addItem(contour);
+        //scene->addItem(pie);
+        scene->addItem(r);
 
         graphicsView->setScene(scene);
-        scene->addItem(ellipse1);
-        scene->addItem(ellipse2);
         subLayout->addWidget(graphicsView);
-
-        QLabel * habitDescriptionLabel = new QLabel(habits[i].description, this);
-        habitDescriptionLabel->setAlignment(Qt::AlignCenter);
-        subLayout->addWidget(habitDescriptionLabel);
-
-        QLabel * streakLabel = new QLabel(QString::number(habits[i].streak), this);
-        streakLabel->setAlignment(Qt::AlignCenter);
-        subLayout->addWidget(streakLabel);
-
-        QPushButton * streakButton = new QPushButton("+", this);
+        subLayout->addWidget(descriptionLabel);
+        //subLayout->addWidget(streakLabel);
         subLayout->addWidget(streakButton);
-        connect(streakButton, &QPushButton::clicked, this, [=](){
-            streakButton_clicked(i);
-
-        });
-
-        __layout->addLayout(subLayout, i, 0);
+        layout->addLayout(subLayout, i, 0);
     }
+
+    this->setLayout(layout);
 }
 
 void HabitTracker::draw(QTabWidget * parent)
 {
-    QWidget * window = this;
-    window->setLayout(__layout);
     drawGraphics();
-    parent->addTab(window, "Habit tracker");
+    parent->addTab(this, "Habit tracker");
+}
 
+void HabitTracker::resizeEvent(QResizeEvent * e)
+{
+    qDeleteAll(this->children());
+    drawGraphics();
 }
 
 void HabitTracker::streakButton_clicked(int habitIndex)
 {
     QJsonObject jsonHabit = __database.at(habitIndex).toObject();
-    jsonHabit["streak"] = QJsonValue::fromVariant(QVariant( jsonHabit["streak"].toInt() + 1 ));
+    jsonHabit["streak"] = QJsonValue::fromVariant(QVariant(jsonHabit["streak"].toInt() + 1));
     __database.replace(habitIndex, jsonHabit);
+    __habits[habitIndex].streak++;
     saveDatabase();
-    QLayoutItem* item;
-    while ( ( item = this->layout()->takeAt( 0 ) ) != NULL )
-    {
-        delete item->widget();
-        delete item;
-    }
+
+    qDeleteAll(this->children());
     drawGraphics();
 }
 
