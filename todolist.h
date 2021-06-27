@@ -10,11 +10,12 @@ class TodoList : public Database, public QWidget
 {
 
 public:
-    TodoList();
-    void draw(QTabWidget * parent);
+    TodoList(QWidget * parent);
+    void display(QTabWidget * tabWidget);
 
 private:
-    QStringList getTodoList();
+    QStringList __todoList;
+
     bool addTask(const QString & taskDescription);
     bool completeTask(int taskIndex);
 

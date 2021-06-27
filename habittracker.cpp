@@ -5,8 +5,8 @@
 #include <QVBoxLayout>
 #include <QDate>
 #include <QLineEdit>
+#include <QComboBox>
 #include "habittracker.h"
-
 
 HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(parent)
 {
@@ -26,6 +26,7 @@ HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(
         else
             __habits.append(h);
     }
+
     saveDatabase();
 }
 
@@ -49,8 +50,16 @@ void HabitTracker::redraw()
 
     QVBoxLayout * layout = new QVBoxLayout(this);
 
+    QComboBox * completedHabitsComboBox = new QComboBox(this);
+
     for(int i = 0; i < __habits.size(); i++)
     {
+        if(__habits[i].completed)
+        {
+            completedHabitsComboBox->addItem(__habits[i].description);
+            continue;
+        }
+
         QHBoxLayout * sublayout = new QHBoxLayout();
 
         QString descriptionString = QString("%1 - %2 / %3").arg(__habits[i].description, QString::number(__habits[i].streak), QString::number(__MAX_STREAK));
@@ -70,6 +79,9 @@ void HabitTracker::redraw()
 
         layout->addLayout(sublayout);
     }
+
+    QLabel * comboBoxLabel = new QLabel("Completed habits", this);
+
     QLineEdit * newHabitLineEdit = new QLineEdit(this);
     newHabitLineEdit->setPlaceholderText("New habit description");
 
@@ -78,14 +90,16 @@ void HabitTracker::redraw()
 
     layout->addWidget(newHabitPushButton);
     layout->addWidget(newHabitLineEdit);
+    layout->addWidget(comboBoxLabel);
+    layout->addWidget(completedHabitsComboBox);
 
     this->setLayout(layout);
 }
 
-void HabitTracker::display(QTabWidget * parent)
+void HabitTracker::display(QTabWidget * tabWidget)
 {
     redraw();
-    parent->addTab(this, "Habit tracker");
+    tabWidget->addTab(this, "Habit tracker");
 }
 
 
@@ -93,15 +107,30 @@ void HabitTracker::streakButton_clicked(int habitIndex)
 {
     int newStreak = __habits[habitIndex].streak + 1;
 
-    // Update value in vector
-    __habits[habitIndex].streak = newStreak;
+    if(__habits[habitIndex].startDay + newStreak < __calender->dayOfYear())
+    {
+        __habits.removeAt(habitIndex);
+        __database.removeAt(habitIndex);
+    }
+    else
+    {
+        // Update value in vector
+        __habits[habitIndex].streak = newStreak;
 
-    // Update value in databse, and save
-    QJsonObject jsonHabit = __database.at(habitIndex).toObject();
-    jsonHabit["streak"] = QJsonValue::fromVariant(QVariant(newStreak));
-    __database.replace(habitIndex, jsonHabit);
+        // Update value in databse, and save
+        QJsonObject jsonHabit = __database.at(habitIndex).toObject();
+        jsonHabit["streak"] = QJsonValue::fromVariant(QVariant(newStreak));
+        __database.replace(habitIndex, jsonHabit);
+
+        if(newStreak == __MAX_STREAK)
+        {
+            __habits[habitIndex].completed = true;
+            jsonHabit["completed"] = QJsonValue::fromVariant(true);
+            __database.replace(habitIndex, jsonHabit);
+        }
+    }
+
     saveDatabase();
-
     redraw();
 }
 

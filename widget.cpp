@@ -8,20 +8,16 @@
 #include "todolist.h"
 
 
-Widget::Widget(QWidget *parent) : QWidget(parent)
+Widget::Widget(QWidget * parent) : QWidget(parent)
 {
-    //Init
-    __todolist.openDatabase();
-
     //Drawing
     QVBoxLayout * layout = new QVBoxLayout();
     this->setLayout(layout);
     QTabWidget * tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget);
 
-    __todolist.draw(tabWidget);
+    __todolist->display(tabWidget);
     __habitTracker->display(tabWidget);
-
 }
 
 

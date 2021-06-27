@@ -5,17 +5,11 @@
 #include "Constants.h"
 #include "todolist.h"
 
-//---Back-End---//
-TodoList::TodoList() : Database("TodoList")
-{}
-
-QStringList TodoList::getTodoList()
+TodoList::TodoList(QWidget * parent) : Database("TodoList"), QWidget(parent)
 {
-    QStringList stringTodoList;
+    openDatabase();
     for(QVariant & v : __database.toVariantList())
-        stringTodoList.append(v.toString());
-
-    return stringTodoList;
+        __todoList.append(v.toString());
 }
 
 bool TodoList::addTask(const QString & taskDescription)
@@ -31,31 +25,28 @@ bool TodoList::completeTask(int taskIndex)
     bool ret = saveDatabase();
     return ret;
 }
-//--------------//
 
-//---Front-End---//
-void TodoList::draw(QTabWidget *parent)
+void TodoList::display(QTabWidget * tabWidget)
 {
-    QWidget * window = this;
     QVBoxLayout * layout = new QVBoxLayout();
-    window->setLayout(layout);
 
-    __listWidget = new QListWidget(window);
+    __listWidget = new QListWidget(this);
     layout->addWidget(__listWidget);
-    __listWidget->addItems(getTodoList());
+    __listWidget->addItems(__todoList);
 
-    __addTaskButton = new QPushButton("Add new task", window);
+    __addTaskButton = new QPushButton("Add new task", this);
     layout->addWidget(__addTaskButton);
 
-    __lineEdit = new QLineEdit(window);
+    __lineEdit = new QLineEdit(this);
     __lineEdit->setPlaceholderText("New task description");
     layout->addWidget(__lineEdit);
 
-    window->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    parent->addTab(window, "Todo List");
+    tabWidget->addTab(this, "Todo List");
 
     connect(__addTaskButton, &QPushButton::clicked, this, &TodoList::addTaskButton_clicked);
     connect(__listWidget, &QListWidget::itemDoubleClicked, this, &TodoList::tabWidgetItem_double_clicked);
+
+    this->setLayout(layout);
 
 }
 
@@ -73,5 +64,5 @@ void TodoList::tabWidgetItem_double_clicked()
     completeTask(taskIndex);
     __listWidget->takeItem(taskIndex);
 }
-//--------------//
+
 

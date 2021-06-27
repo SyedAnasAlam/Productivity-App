@@ -16,8 +16,8 @@ public:
     ~Widget();
 
 private:
-    TodoList __todolist;
-    HabitTracker* __habitTracker = new HabitTracker(this);
+    TodoList * __todolist = new TodoList(this);
+    HabitTracker * __habitTracker = new HabitTracker(this);
 
 
 };

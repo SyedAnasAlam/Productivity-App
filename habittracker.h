@@ -19,7 +19,7 @@ class HabitTracker : public Database, public QWidget
 
 public:
     HabitTracker(QWidget * parent);
-    void display(QTabWidget * parent);
+    void display(QTabWidget * tabWidget);
     void redraw();
 
 private:
