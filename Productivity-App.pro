@@ -13,6 +13,7 @@ SOURCES += \
     habittracker.cpp \
     main.cpp \
     todolist.cpp \
+    weeklyschedule.cpp \
     widget.cpp
 
 HEADERS += \
@@ -20,6 +21,7 @@ HEADERS += \
     database.h \
     habittracker.h \
     todolist.h \
+    weeklyschedule.h \
     widget.h
 
 FORMS +=

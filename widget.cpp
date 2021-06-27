@@ -18,6 +18,7 @@ Widget::Widget(QWidget * parent) : QWidget(parent)
 
     __todolist->display(tabWidget);
     __habitTracker->display(tabWidget);
+    __weeklySchedule->display(tabWidget);
 }
 
 

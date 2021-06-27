@@ -142,6 +142,7 @@ void HabitTracker::newHabitButton_clicked(QString newHabitDescription)
     newHabit.completed = false;
     newHabit.startDay = __calender->dayOfYear();
     newHabit.streak = 0;
+
     addHabit(newHabit);
     __habits.append(newHabit);
 

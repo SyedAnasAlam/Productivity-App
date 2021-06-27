@@ -4,8 +4,7 @@
 #include <QWidget>
 #include "todolist.h"
 #include "habittracker.h"
-
-#include <QResizeEvent>
+#include "weeklyschedule.h"
 
 class Widget : public QWidget
 {
@@ -18,7 +17,7 @@ public:
 private:
     TodoList * __todolist = new TodoList(this);
     HabitTracker * __habitTracker = new HabitTracker(this);
-
+    WeeklySchedule * __weeklySchedule = new WeeklySchedule(this);
 
 };
 
