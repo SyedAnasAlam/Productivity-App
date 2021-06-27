@@ -15,8 +15,7 @@ struct activity
 {
     QString description;
     int day;
-    int startHour;
-    int endHour;
+    int hour;
 };
 
 class WeeklySchedule : public Database, public QWidget
@@ -30,18 +29,12 @@ private:
     QVector<activity> __activities;
 
     QTableWidget * __tableWidget;
-    QHBoxLayout * __newActivityLayout;
-    QLineEdit * __newActivityLineEdit;
-    QComboBox * __dayComboBox;
-    QSpinBox * __startHourSpinBox;
-    QSpinBox * __endHourSpinBox;
-    QPushButton * __addActivityPushButton;
-
     const int DAY_START_HOUR = 8;
     const int DAY_END_HOUR = 20;
 
 private slots:
     void newActivityPushButton_clicked();
+    void newActivityTableWidget_changed(int row, int column);
 
 };
 
