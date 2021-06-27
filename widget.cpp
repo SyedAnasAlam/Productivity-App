@@ -20,7 +20,7 @@ Widget::Widget(QWidget *parent) : QWidget(parent)
     layout->addWidget(tabWidget);
 
     __todolist.draw(tabWidget);
-    __habitTracker->draw(tabWidget);
+    __habitTracker->display(tabWidget);
 
 }
 

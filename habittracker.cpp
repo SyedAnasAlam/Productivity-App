@@ -1,34 +1,33 @@
 #include <QJsonObject>
-#include <QGridLayout>
-#include <QVBoxLayout>
 #include <QPushButton>
-#include <QGraphicsEllipseItem>
-#include <QGraphicsRectItem>
-#include <QGraphicsTextItem>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QBrush>
+#include <QProgressBar>
 #include <QLabel>
-#include <QtMath>
-#include <QResizeEvent>
-#include <qevent.h>
+#include <QVBoxLayout>
+#include <QDate>
+#include <QLineEdit>
 #include "habittracker.h"
 
 
 HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(parent)
 {
     openDatabase();
-    for(QJsonValue && v : __database)
+
+    __calender = new QDate(QDate::currentDate());
+
+    for(int i = 0; i < __database.size(); i++)
     {
         habit h;
-        h.description = v["description"].toString();
-        h.completed = v["completed"].toBool();
-        h.startDay = v["startDay"].toInt();
-        h.streak = v["streak"].toInt();
-        __habits.append(h);
+        h.description = __database.at(i)["description"].toString();
+        h.completed = __database.at(i)["completed"].toBool();
+        h.startDay = __database.at(i)["startDay"].toInt();
+        h.streak = __database.at(i)["streak"].toInt();
+        if(h.startDay + h.streak < __calender->dayOfYear())
+            __database.removeAt(i);
+        else
+            __habits.append(h);
     }
+    saveDatabase();
 }
-
 
 bool HabitTracker::addHabit(const habit & habit)
 {
@@ -43,81 +42,80 @@ bool HabitTracker::addHabit(const habit & habit)
     return ret;
 }
 
-void HabitTracker::drawGraphics()
+
+void HabitTracker::redraw()
 {
-    QGridLayout * layout = new QGridLayout();
+    qDeleteAll(this->children());
 
-    QBrush brush;
-    brush.setColor(*__PIE_COLOR);
-    brush.setStyle(Qt::BrushStyle::SolidPattern);
-
-    int areaScreen = this->width() * this->height();
-    int count = __habits.size();
+    QVBoxLayout * layout = new QVBoxLayout(this);
 
     for(int i = 0; i < __habits.size(); i++)
     {
-        QLabel * descriptionLabel = new QLabel(__habits[i].description + " - " + QString::number(__habits[i].streak) + " / " + QString::number(66), this);
-        descriptionLabel->setAlignment(Qt::AlignCenter);
-        //QLabel * streakLabel = new QLabel(QString::number(__habits[i].streak), this);
-        //streakLabel->setAlignment(Qt::AlignCenter);
+        QHBoxLayout * sublayout = new QHBoxLayout();
+
+        QString descriptionString = QString("%1 - %2 / %3").arg(__habits[i].description, QString::number(__habits[i].streak), QString::number(__MAX_STREAK));
+        QProgressBar * progressBar = new QProgressBar(this);
+        progressBar->setRange(0, __MAX_STREAK);
+        progressBar->setValue(__habits[i].streak);
+        progressBar->setFormat(descriptionString);
+        progressBar->setAlignment(Qt::AlignCenter);
+        progressBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         QPushButton * streakButton = new QPushButton("+", this);
+        streakButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         connect(streakButton, &QPushButton::clicked, this, [=](){ streakButton_clicked(i); });
 
-        QVBoxLayout * subLayout = new QVBoxLayout();
-        QGraphicsView * graphicsView = new QGraphicsView(this);
-        graphicsView->setFrameShape(QFrame::NoFrame);
-        QGraphicsScene * scene = new QGraphicsScene(graphicsView);
+        sublayout->addWidget(progressBar);
+        sublayout->addWidget(streakButton);
 
-        int width = this->width();
-        int height = (this->height() - descriptionLabel->height() - streakButton->height())/__habits.size();
-        int radius = width < height ? width/2 : height/2;
-
-        QGraphicsRectItem * r = new QGraphicsRectItem(0, 0, width, height);
-        QGraphicsEllipseItem * contour = new QGraphicsEllipseItem(0, 0, radius, radius);
-        QGraphicsEllipseItem * pie = new QGraphicsEllipseItem(0, 0, radius, radius);
-        pie->setStartAngle(0);
-        int angle = (__habits[i].streak/__MAX_STREAK) * 360;
-        pie->setSpanAngle(angle*16);
-        pie->setBrush(brush);
-        r->setBrush(brush);
-
-        //scene->addItem(contour);
-        //scene->addItem(pie);
-        scene->addItem(r);
-
-        graphicsView->setScene(scene);
-        subLayout->addWidget(graphicsView);
-        subLayout->addWidget(descriptionLabel);
-        //subLayout->addWidget(streakLabel);
-        subLayout->addWidget(streakButton);
-        layout->addLayout(subLayout, i, 0);
+        layout->addLayout(sublayout);
     }
+    QLineEdit * newHabitLineEdit = new QLineEdit(this);
+    newHabitLineEdit->setPlaceholderText("New habit description");
+
+    QPushButton * newHabitPushButton = new QPushButton("Add new habit", this);
+    connect(newHabitPushButton, &QPushButton::clicked, this, [=]{ newHabitButton_clicked(newHabitLineEdit->text()); });
+
+    layout->addWidget(newHabitPushButton);
+    layout->addWidget(newHabitLineEdit);
 
     this->setLayout(layout);
 }
 
-void HabitTracker::draw(QTabWidget * parent)
+void HabitTracker::display(QTabWidget * parent)
 {
-    drawGraphics();
+    redraw();
     parent->addTab(this, "Habit tracker");
 }
 
-void HabitTracker::resizeEvent(QResizeEvent * e)
-{
-    qDeleteAll(this->children());
-    drawGraphics();
-}
 
 void HabitTracker::streakButton_clicked(int habitIndex)
 {
+    int newStreak = __habits[habitIndex].streak + 1;
+
+    // Update value in vector
+    __habits[habitIndex].streak = newStreak;
+
+    // Update value in databse, and save
     QJsonObject jsonHabit = __database.at(habitIndex).toObject();
-    jsonHabit["streak"] = QJsonValue::fromVariant(QVariant(jsonHabit["streak"].toInt() + 1));
+    jsonHabit["streak"] = QJsonValue::fromVariant(QVariant(newStreak));
     __database.replace(habitIndex, jsonHabit);
-    __habits[habitIndex].streak++;
     saveDatabase();
 
-    qDeleteAll(this->children());
-    drawGraphics();
+    redraw();
+}
+
+
+void HabitTracker::newHabitButton_clicked(QString newHabitDescription)
+{
+    habit newHabit;
+    newHabit.description = newHabitDescription;
+    newHabit.completed = false;
+    newHabit.startDay = __calender->dayOfYear();
+    newHabit.streak = 0;
+    addHabit(newHabit);
+    __habits.append(newHabit);
+
+    redraw();
 }
 
