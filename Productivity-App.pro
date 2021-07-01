@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     database.cpp \
     habittracker.cpp \
+    impossiblelist.cpp \
     main.cpp \
     todolist.cpp \
     weeklyschedule.cpp \
@@ -20,6 +21,7 @@ HEADERS += \
     Constants.h \
     database.h \
     habittracker.h \
+    impossiblelist.h \
     todolist.h \
     weeklyschedule.h \
     widget.h

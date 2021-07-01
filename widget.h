@@ -5,6 +5,7 @@
 #include "todolist.h"
 #include "habittracker.h"
 #include "weeklyschedule.h"
+#include "impossiblelist.h"
 
 class Widget : public QWidget
 {
@@ -18,6 +19,7 @@ private:
     TodoList * __todolist = new TodoList(this);
     HabitTracker * __habitTracker = new HabitTracker(this);
     WeeklySchedule * __weeklySchedule = new WeeklySchedule(this);
+    ImpossibleList * __impossibleList = new ImpossibleList(this);
 
 };
 

@@ -11,7 +11,6 @@
 HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(parent)
 {
     openDatabase();
-
     __calender = new QDate(QDate::currentDate());
 
     for(int i = 0; i < __database.size(); i++)
@@ -22,9 +21,9 @@ HabitTracker::HabitTracker(QWidget *parent) : Database("HabitTracker"), QWidget(
         h.startDay = __database.at(i)["startDay"].toInt();
         h.streak = __database.at(i)["streak"].toInt();
         if(h.startDay + h.streak < __calender->dayOfYear())
-            __database.removeAt(i);
+          __database.removeAt(i);
         else
-            __habits.append(h);
+          __habits.append(h);
     }
 
     saveDatabase();
