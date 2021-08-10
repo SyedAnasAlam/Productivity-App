@@ -5,22 +5,17 @@
 #include <QListWidget>
 #include <QTabWidget>
 #include <QDialog>
+#include <QColor>
 #include "database.h"
 
-struct impossibleSubGoal
-{
-    QString description;
-    bool completed;
-    bool focused;
-};
-
-struct impossibleGoal
+struct goal
 {
     QString description;
     bool completed;
     bool allSubGoalsDone;
     bool focused;
-    QVector<impossibleSubGoal> subGoals;
+    bool isParent;
+    QVector<goal> subGoals;
 };
 
 class ImpossibleList : public Database, public QWidget
@@ -32,14 +27,15 @@ public:
 
 private:
     QString displayDialog();
-    QVector<impossibleGoal> __goals;
-    QVector<impossibleGoal> __completedGoals;
+    QVector<goal> __goals;
 
     QListWidget * __goalsListWidget;
-    QListWidget * __completedGoalsListWidget;
     QLineEdit * __newGoalLineEdit;
     QDialog * completedGoalDialog;
+    QDialog * __historyDialog;
 
+    QColor * __focusedColor = new QColor(0, 0, 255);
+    QColor * __completedColor = new QColor(0, 255, 0);
 
 
 private slots:
