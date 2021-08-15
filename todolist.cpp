@@ -2,7 +2,6 @@
 #include <QVBoxLayout>
 #include <QTabWidget>
 #include <QListWidgetItem>
-#include "Constants.h"
 #include "todolist.h"
 
 TodoList::TodoList(QWidget * parent) : Feature("TodoList"), QWidget(parent)
