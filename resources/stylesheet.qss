@@ -1,0 +1,110 @@
+*
+{
+    font-family: Roboto;
+    font-size: 16px;
+}
+
+QListWidget
+{
+    border: 0px solid white;
+}
+
+#container
+{
+    background: #eeeeee;
+}
+
+QListWidget
+{
+    font-size: 18px;
+}
+
+QListWidget::Item
+{
+    border-bottom: 4px solid #285FE0;
+    padding-bottom: 15px;
+    padding-top: 15px;
+    font-size: 22px;
+}
+
+QListWidget::Item:selected
+{
+    background: #285FE0;
+    color: white;
+}
+
+QListWidget::Item:hover
+{
+    background: #285FE0;
+    color: white;
+}
+
+
+QTabBar::Tab
+{
+    width: 150px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border: 0px solid white;
+}
+
+QTabBar::Tab:selected
+{
+    border-top: 4px solid #285FE0;
+    background: white;
+}
+
+QPushButton
+{
+    border: 2px solid #b71c1c;
+    padding: 5px;
+}
+
+QPushButton:hover
+{
+    background: #b71c1c;
+    color: white;
+}
+
+QLineEdit
+{
+    background: #eeeeee;
+    padding: 5px;
+    border: 2px solid #eeeeee;
+}
+
+#streakButton
+{
+    border-radius: 20px;
+    font-size: 30px;
+    max-height: 30px;
+    min-width: 30px;
+}
+
+QProgressBar
+{
+    background-color: #eeeeee;
+    font-size: 26px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+QProgressBar::chunk
+{
+    background-color: #1b5e20;
+}
+
+#completedHabitsList::Item, #completedGoalsList::Item
+{
+    padding: 0px;
+}
+
+QTableWidget
+{
+    border: 0px;
+}
+
+QDialog
+{
+    background: white;
+}

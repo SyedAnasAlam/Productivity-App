@@ -4,7 +4,7 @@
 #include <QTabWidget>
 #include <QProgressBar>
 #include <QDate>
-#include "database.h"
+#include "feature.h"
 
 struct habit
 {
@@ -14,16 +14,16 @@ struct habit
     bool completed;
 };
 
-class HabitTracker : public Database, public QWidget
+class HabitTracker : public Feature, public QWidget
 {
 
 public:
     HabitTracker(QWidget * parent);
-    void display(QTabWidget * tabWidget);
-    void redraw();
+    void v_display(QTabWidget * tabWidget);
+    void v_redraw();
 
 private:
-    bool addHabit(const habit & habit);
+    bool m_addHabit(const habit & habit);
     QVector<habit> __habits;
     QDate * __calender;
     const int __MAX_STREAK = 66;
@@ -32,6 +32,7 @@ private:
 private slots:
     void streakButton_clicked(int habitIndex);
     void newHabitButton_clicked(QString newHabitDescription);
+    void completedHabitButton_clicked();
 
 };
 

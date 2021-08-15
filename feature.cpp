@@ -3,13 +3,13 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QDebug>
-#include "database.h"
+#include "feature.h"
 
 
-Database::Database(const QString & databaseName) : __databasePath(QApplication::applicationDirPath() + "/Database/" + databaseName + ".json")
+Feature::Feature(const QString & databaseName) : __databasePath(QApplication::applicationDirPath() + "/Database/" + databaseName + ".json")
 {}
 
-bool Database::openDatabase()
+bool Feature::m_openDatabase()
 {
     QFile database(__databasePath);
     bool ret = database.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -22,7 +22,7 @@ bool Database::openDatabase()
     return ret;
 }
 
-bool Database::saveDatabase()
+bool Feature::m_saveDatabase()
 {
     QJsonDocument jsonDataDoc(__database);
 

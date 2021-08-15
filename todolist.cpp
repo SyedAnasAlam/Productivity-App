@@ -5,32 +5,34 @@
 #include "Constants.h"
 #include "todolist.h"
 
-TodoList::TodoList(QWidget * parent) : Database("TodoList"), QWidget(parent)
+TodoList::TodoList(QWidget * parent) : Feature("TodoList"), QWidget(parent)
 {
-    openDatabase();
+    m_openDatabase();
     for(QVariant & v : __database.toVariantList())
         __todoList.append(v.toString());
 }
 
-bool TodoList::addTask(const QString & taskDescription)
+bool TodoList::m_addTask(const QString & taskDescription)
 {
     __database.append(taskDescription);
-    bool ret = saveDatabase();
+    bool ret = m_saveDatabase();
     return ret;
 }
 
-bool TodoList::completeTask(int taskIndex)
+bool TodoList::m_completeTask(int taskIndex)
 {
     __database.removeAt(taskIndex);
-    bool ret = saveDatabase();
+    bool ret = m_saveDatabase();
     return ret;
 }
 
-void TodoList::display(QTabWidget * tabWidget)
+void TodoList::v_display(QTabWidget * tabWidget)
 {
     QVBoxLayout * layout = new QVBoxLayout();
 
     __listWidget = new QListWidget(this);
+    __listWidget->setObjectName("todoListWidget");
+
     layout->addWidget(__listWidget);
     __listWidget->addItems(__todoList);
 
@@ -53,7 +55,11 @@ void TodoList::display(QTabWidget * tabWidget)
 void TodoList::addTaskButton_clicked()
 {
     QString newTaskDescription = __lineEdit->text();
-    addTask(newTaskDescription);
+
+    if(newTaskDescription.length() <= 0)
+        return;
+
+    m_addTask(newTaskDescription);
     __listWidget->addItem(newTaskDescription);
     __lineEdit->setText("");
 }
@@ -61,7 +67,7 @@ void TodoList::addTaskButton_clicked()
 void TodoList::tabWidgetItem_double_clicked()
 {
     int taskIndex = __listWidget->currentRow();
-    completeTask(taskIndex);
+    m_completeTask(taskIndex);
     __listWidget->takeItem(taskIndex);
 }
 

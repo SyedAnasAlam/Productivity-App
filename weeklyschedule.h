@@ -9,7 +9,8 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QPushButton>
-#include "database.h"
+#include <QDateTime>
+#include "feature.h"
 
 struct activity
 {
@@ -18,12 +19,12 @@ struct activity
     int hour;
 };
 
-class WeeklySchedule : public Database, public QWidget
+class WeeklySchedule : public Feature, public QWidget
 {
 
 public:
     WeeklySchedule(QWidget * parent);
-    void display(QTabWidget * tabWidget);
+    void v_display(QTabWidget * tabWidget);
 
 private:
     QVector<activity> __activities;
@@ -31,6 +32,10 @@ private:
     QTableWidget * __tableWidget;
     const int DAY_START_HOUR = 8;
     const int DAY_END_HOUR = 20;
+
+    QDateTime * __dateTime;
+
+    void updateSchedule();
 
 private slots:
     void newActivityPushButton_clicked();

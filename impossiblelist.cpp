@@ -4,11 +4,12 @@
 #include <QJsonObject>
 #include <QDialog>
 #include <QLabel>
+#include <QIcon>
 #include "impossiblelist.h"
 
-ImpossibleList::ImpossibleList(QWidget * parent) : Database("ImpossibleList"), QWidget(parent)
+ImpossibleList::ImpossibleList(QWidget * parent) : Feature("ImpossibleList"), QWidget(parent)
 {
-    openDatabase();
+    m_openDatabase();
 
     for(int i = 0; i < __database.size(); i++)
     {
@@ -35,19 +36,24 @@ ImpossibleList::ImpossibleList(QWidget * parent) : Database("ImpossibleList"), Q
     }
 }
 
-void ImpossibleList::display(QTabWidget * tabWidget)
+void ImpossibleList::v_display(QTabWidget * tabWidget)
 {
     QVBoxLayout * layout = new QVBoxLayout(this);
 
     __goalsListWidget = new QListWidget(this);
+    __goalsListWidget->setObjectName("goalsListWidget");
+
+    QIcon completedIcon(":/resources/checkbox-circle-fill.png");
+    QIcon focusedIcon(":/resources/arrow-right-circle-fill.png");
 
     for(goal & g : __goals)
     {
         QListWidgetItem * listWidgetItem = new QListWidgetItem();
+
         if(g.allSubGoalsDone)
         {
-            listWidgetItem->setBackground(QBrush(*__completedColor));
             listWidgetItem->setText(g.subGoals.length() > 0 ? g.subGoals.last().description : g.description);
+            listWidgetItem->setIcon(completedIcon);
         }
         else if(g.completed)
         {
@@ -57,14 +63,14 @@ void ImpossibleList::display(QTabWidget * tabWidget)
             listWidgetItem->setText(g.subGoals.at(i).description);
 
             if(g.subGoals.at(i).focused)
-                listWidgetItem->setBackground(QBrush(*__focusedColor));
+                listWidgetItem->setIcon(focusedIcon);
         }
         else
         {
            listWidgetItem->setText(g.description);
 
            if(g.focused)
-             listWidgetItem->setBackground(QBrush(*__focusedColor));
+             listWidgetItem->setIcon(focusedIcon);
         }
 
         __goalsListWidget->addItem(listWidgetItem);
@@ -83,6 +89,7 @@ void ImpossibleList::display(QTabWidget * tabWidget)
 
     QHBoxLayout * newGoalLayout = new QHBoxLayout(this);
     __newGoalLineEdit = new QLineEdit(this);
+    __newGoalLineEdit->setPlaceholderText("New goal description");
     QPushButton * newGoalButton = new QPushButton("Add new goal", this);
     connect(newGoalButton, &QPushButton::clicked, this, &ImpossibleList::newGoalButton_clicked);
     newGoalLayout->addWidget(__newGoalLineEdit);
@@ -96,47 +103,53 @@ void ImpossibleList::display(QTabWidget * tabWidget)
     tabWidget->addTab(this, "Impossible List");
 }
 
-QString ImpossibleList::displayDialog()
+QString ImpossibleList::v_displayNewGoalDialog()
 {
-    completedGoalDialog = new QDialog(this);
+    __completedGoalDialog = new QDialog(this);
 
     QVBoxLayout * dialogLayout = new QVBoxLayout(this);
-    QLabel * dialogLabel = new QLabel("Dialog description", this);
     QLineEdit * newSubGoalLineEdit = new QLineEdit(this);
-    dialogLayout->addWidget(dialogLabel);
+    newSubGoalLineEdit->setPlaceholderText("New subgoal description");
     dialogLayout->addWidget(newSubGoalLineEdit);
 
     QHBoxLayout * buttonsLayout = new QHBoxLayout(this);
-    QPushButton * acceptButton = new QPushButton("Accept", this);
-    QPushButton * rejectButton =new QPushButton("Reject", this);
+    QPushButton * acceptButton = new QPushButton("Add new subgoal", this);
+    QPushButton * rejectButton =new QPushButton("No not add new subgoal", this);
     buttonsLayout->addWidget(acceptButton);
     buttonsLayout->addWidget(rejectButton);
 
     dialogLayout->addLayout(buttonsLayout);
-    completedGoalDialog->setLayout(dialogLayout);
+    __completedGoalDialog->setLayout(dialogLayout);
 
-    connect(acceptButton, &QPushButton::clicked, completedGoalDialog, &QDialog::accept);
-    connect(rejectButton, &QPushButton::clicked, completedGoalDialog, &QDialog::reject);
+    connect(acceptButton, &QPushButton::clicked, __completedGoalDialog, &QDialog::accept);
+    connect(rejectButton, &QPushButton::clicked, __completedGoalDialog, &QDialog::reject);
 
-    int ret = completedGoalDialog->exec();
+    int ret = __completedGoalDialog->exec();
 
     return ret == QDialog::Accepted ? newSubGoalLineEdit->text() : "";
 }
 
 void ImpossibleList::completeButton_clicked()
 {
-    QString newSubGoalDescription = displayDialog();
     int index = __goalsListWidget->currentRow();
+    if(index == -1)
+        return;
+
     goal selectedGoal = __goals.at(index);
+    if(selectedGoal.allSubGoalsDone)
+        return;
+
+    QString newSubGoalDescription = v_displayNewGoalDialog();
 
     if(selectedGoal.completed)
     {
         goal sg = selectedGoal.subGoals.at(0);
         int i;
         for(i = 0; selectedGoal.subGoals.at(i).completed; i++);
-        qDebug() << i;
+
         sg = selectedGoal.subGoals.at(i);
         sg.completed = true;
+        sg.focused = false;
         selectedGoal.subGoals.replace(i, sg);
         __goals.replace(index, selectedGoal);
 
@@ -144,6 +157,7 @@ void ImpossibleList::completeButton_clicked()
     else
     {
         selectedGoal.completed = true;
+        selectedGoal.focused = false;
     }
 
     if(newSubGoalDescription != "")
@@ -176,11 +190,13 @@ void ImpossibleList::completeButton_clicked()
 
         jsonSubGoal = jsonSubGoals.at(sgIndex).toObject();
         jsonSubGoal["completed"] = true;
+        jsonSubGoal["focused"] = false;
         jsonSubGoals.replace(sgIndex, jsonSubGoal);
     }
     else
     {
-        jsonGoal["completed"] = QJsonValue::fromVariant(true);
+        jsonGoal["completed"] = true;
+        jsonGoal["focused"] = false;
     }
 
     if(newSubGoalDescription != "")
@@ -212,17 +228,24 @@ void ImpossibleList::completeButton_clicked()
 
     jsonGoal["subGoals"] = jsonSubGoals;
     __database.replace(index, jsonGoal);
-    saveDatabase();
+    m_saveDatabase();
 
     if(newSubGoalDescription != "")
+    {
         __goalsListWidget->currentItem()->setText(newSubGoalDescription);
+        __goalsListWidget->currentItem()->setIcon(QIcon());
+    }
     else
-        __goalsListWidget->currentItem()->setBackground(QBrush(*__completedColor));
+    {
+        __goalsListWidget->currentItem()->setIcon(QIcon(":/resources/checkbox-circle-fill.png"));
+    }
 }
 
 void ImpossibleList::focusButton_clicked()
 {
     int parentIndex = __goalsListWidget->currentRow();
+    if(parentIndex == -1)
+        return;
 
     if(__goals.at(parentIndex).allSubGoalsDone)
         return;
@@ -247,7 +270,7 @@ void ImpossibleList::focusButton_clicked()
     }
     __goals.replace(parentIndex, parentGoal);
 
-    __goalsListWidget->currentItem()->setBackground(newVal ? QBrush(*__focusedColor) : QBrush(Qt::white));
+    __goalsListWidget->currentItem()->setIcon(newVal ? QIcon(":/resources/arrow-right-circle-fill.png") : QIcon());
 
     QJsonObject jsonGoal =  __database.at(parentIndex).toObject();
     QJsonArray jsonSubGoals = jsonGoal["subGoals"].toArray();
@@ -267,25 +290,30 @@ void ImpossibleList::focusButton_clicked()
 
     jsonGoal["subGoals"] = jsonSubGoals;
     __database.replace(parentIndex, jsonGoal);
-    saveDatabase();
+    m_saveDatabase();
 }
 
 void ImpossibleList::subGoalsButton_clicked()
 {
+    int index = __goalsListWidget->currentRow();
+    if(index == -1)
+        return;
+
     __historyDialog = new QDialog(this);
     QVBoxLayout * layout = new QVBoxLayout(this);
     QListWidget * list = new QListWidget(this);
+    list->setObjectName("completedGoalsList");
     layout->addWidget(list);
     __historyDialog->setLayout(layout);
 
-    goal selectedGoal = __goals.at(__goalsListWidget->currentRow());
+    goal selectedGoal = __goals.at(index);
     list->addItem(selectedGoal.description);
 
-    for(goal subgoal : selectedGoal.subGoals)
+    for(goal & subgoal : selectedGoal.subGoals)
     {
-        list->addItem(subgoal.description);
         if(!subgoal.completed)
             break;
+        list->addItem(subgoal.description);
     }
 
     __historyDialog->exec();
@@ -296,6 +324,10 @@ void ImpossibleList::newGoalButton_clicked()
 {
     goal newGoal;
     newGoal.description = __newGoalLineEdit->text();
+
+    if(newGoal.description.length() <= 0)
+        return;
+
     newGoal.completed = false;
     newGoal.focused = false;
     newGoal.allSubGoalsDone = false;
@@ -305,7 +337,7 @@ void ImpossibleList::newGoalButton_clicked()
     __goals.append(newGoal);
 
     QJsonObject newJsonGoal;
-    newJsonGoal["description"] =newGoal.description;
+    newJsonGoal["description"] = newGoal.description;
     newJsonGoal["completed"] = false;
     newJsonGoal["focused"] = false;
     newJsonGoal["subGoalsDone"] = false;
@@ -313,9 +345,11 @@ void ImpossibleList::newGoalButton_clicked()
     newJsonGoal["subGoals"] = QJsonValue();
 
     __database.append(newJsonGoal);
-    saveDatabase();
+    m_saveDatabase();
 
     __goalsListWidget->addItem(newGoal.description);
+
+    __newGoalLineEdit->setText("");
 }
 
 

@@ -6,11 +6,12 @@
 #include <QSpinBox>
 #include <QPushButton>
 #include <QJsonObject>
+#include <QTimer>
 #include "weeklyschedule.h"
 
-WeeklySchedule::WeeklySchedule(QWidget * parent) : Database("WeeklySchedule"), QWidget(parent)
+WeeklySchedule::WeeklySchedule(QWidget * parent) : Feature("WeeklySchedule"), QWidget(parent)
 {
-    openDatabase();
+    m_openDatabase();
     for(int i = 0; i < __database.size(); i++)
     {
         activity a;
@@ -20,9 +21,16 @@ WeeklySchedule::WeeklySchedule(QWidget * parent) : Database("WeeklySchedule"), Q
 
         __activities.append(a);
     }
+
+    QTimer * timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [=]() { updateSchedule(); });
+    timer->start(1000*60);
+
+    __dateTime = new QDateTime(QDateTime::currentDateTime());
+
 }
 
-void WeeklySchedule::display(QTabWidget * tabWidget)
+void WeeklySchedule::v_display(QTabWidget * tabWidget)
 {
     QVBoxLayout * layout = new QVBoxLayout(this);
 
@@ -34,6 +42,17 @@ void WeeklySchedule::display(QTabWidget * tabWidget)
         verticalHeaderLabels.append( QString("%1:00").arg(QString::number(i)) );
     __tableWidget->setVerticalHeaderLabels(verticalHeaderLabels);
 
+    for(int i = 0; i < DAY_END_HOUR - DAY_START_HOUR; i++)
+    {
+        for(int j = 0; j < 7; j++)
+        {
+            QTableWidgetItem * item = new QTableWidgetItem("");
+            item->setTextAlignment(Qt::AlignCenter);
+            __tableWidget->setItem(i, j, item);
+
+        }
+    }
+
     for(activity & a : __activities)
     {
         QTableWidgetItem * item = new QTableWidgetItem(a.description);
@@ -43,10 +62,11 @@ void WeeklySchedule::display(QTabWidget * tabWidget)
 
     connect(__tableWidget, &QTableWidget::cellChanged, this, &WeeklySchedule::newActivityTableWidget_changed);
 
+    updateSchedule();
+
     layout->addWidget(__tableWidget);
 
     this->setLayout(layout);
-    this->setMinimumHeight(550);
     tabWidget->addTab(this, "Weekly Schedule");
 }
 
@@ -80,5 +100,16 @@ void WeeklySchedule::newActivityTableWidget_changed(int row, int column)
         __database.append(jsonNewActivity);
     }
 
-    saveDatabase();
+    m_saveDatabase();
+}
+
+void WeeklySchedule::updateSchedule()
+{
+    int day =  __dateTime->date().dayOfWeek();
+    int hour =  __dateTime->time().hour();
+    if(hour >= DAY_START_HOUR && hour <= DAY_END_HOUR)
+    {
+        __tableWidget->item(hour - DAY_START_HOUR, day - 1)->setBackground(QBrush(QColor(40, 95, 224)));
+        __tableWidget->item(hour - DAY_START_HOUR, day - 1)->setForeground(QBrush(Qt::white));
+    }
 }

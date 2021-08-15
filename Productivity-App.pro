@@ -9,22 +9,19 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    database.cpp \
+    feature.cpp \
     habittracker.cpp \
     impossiblelist.cpp \
     main.cpp \
     todolist.cpp \
-    weeklyschedule.cpp \
-    widget.cpp
+    weeklyschedule.cpp
 
 HEADERS += \
-    Constants.h \
-    database.h \
+    feature.h \
     habittracker.h \
     impossiblelist.h \
     todolist.h \
-    weeklyschedule.h \
-    widget.h
+    weeklyschedule.h
 
 FORMS +=
 
@@ -32,3 +29,6 @@ FORMS +=
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

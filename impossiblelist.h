@@ -6,7 +6,8 @@
 #include <QTabWidget>
 #include <QDialog>
 #include <QColor>
-#include "database.h"
+#include <QVBoxLayout>
+#include "feature.h"
 
 struct goal
 {
@@ -18,25 +19,23 @@ struct goal
     QVector<goal> subGoals;
 };
 
-class ImpossibleList : public Database, public QWidget
+class ImpossibleList : public Feature, public QWidget
 {
 
 public:
     ImpossibleList(QWidget * parent);
-    void display(QTabWidget * tabWidget);
+    void v_display(QTabWidget * tabWidget);
 
 private:
-    QString displayDialog();
+    QDialog * __completedGoalDialog;
+    QDialog * __historyDialog;
+
+    QString v_displayNewGoalDialog();
+
     QVector<goal> __goals;
 
     QListWidget * __goalsListWidget;
     QLineEdit * __newGoalLineEdit;
-    QDialog * completedGoalDialog;
-    QDialog * __historyDialog;
-
-    QColor * __focusedColor = new QColor(0, 0, 255);
-    QColor * __completedColor = new QColor(0, 255, 0);
-
 
 private slots:
     void focusButton_clicked();

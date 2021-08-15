@@ -4,20 +4,20 @@
 #include <QListWidget>
 #include <QPushButton>
 #include <QLineEdit>
-#include "database.h"
+#include "feature.h"
 
-class TodoList : public Database, public QWidget
+class TodoList : public Feature, public QWidget
 {
 
 public:
     TodoList(QWidget * parent);
-    void display(QTabWidget * tabWidget);
+    void v_display(QTabWidget * tabWidget);
 
 private:
     QStringList __todoList;
 
-    bool addTask(const QString & taskDescription);
-    bool completeTask(int taskIndex);
+    bool m_addTask(const QString & taskDescription);
+    bool m_completeTask(int taskIndex);
 
     QListWidget * __listWidget;
     QPushButton * __addTaskButton;
