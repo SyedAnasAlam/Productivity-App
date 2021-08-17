@@ -1,8 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>resources/arrow-right-circle-fill.png</file>
-        <file>resources/checkbox-circle-fill.png</file>
         <file>resources/Roboto-Regular.ttf</file>
         <file>resources/stylesheet.qss</file>
+        <file>resources/arrow-right-circle-fill.png</file>
+        <file>resources/checkbox-circle-fill.png</file>
+        <file>resources/Roboto-Black.ttf</file>
+        <file>resources/Roboto-Medium.ttf</file>
     </qresource>
 </RCC>

@@ -2,7 +2,10 @@
 {
     font-family: Roboto;
     font-size: 16px;
+    background: #121212;
+    color: white;
 }
+
 
 QListWidget
 {
@@ -11,7 +14,7 @@ QListWidget
 
 #container
 {
-    background: #eeeeee;
+    background: #2C2C2C;
 }
 
 QListWidget
@@ -21,7 +24,7 @@ QListWidget
 
 QListWidget::Item
 {
-    border-bottom: 4px solid #285FE0;
+    border-bottom: 4px solid #0094C5;
     padding-bottom: 15px;
     padding-top: 15px;
     font-size: 22px;
@@ -29,16 +32,20 @@ QListWidget::Item
 
 QListWidget::Item:selected
 {
-    background: #285FE0;
+    background: #0094C5;
     color: white;
 }
 
 QListWidget::Item:hover
 {
-    background: #285FE0;
+    background: #0094C5;
     color: white;
 }
 
+QTabWidget::pane
+{
+    border: 0px solid black;
+}
 
 QTabBar::Tab
 {
@@ -46,31 +53,34 @@ QTabBar::Tab
     padding-top: 10px;
     padding-bottom: 10px;
     border: 0px solid white;
+    background: #2C2C2C;
+    font-size: 18px;
 }
 
 QTabBar::Tab:selected
 {
-    border-top: 4px solid #285FE0;
-    background: white;
+    border-top: 4px solid #0094C5;
+    background: #121212;
 }
 
 QPushButton
 {
-    border: 2px solid #b71c1c;
+    border: 2px solid #0094C5;
     padding: 5px;
+    font-size: 18px;
 }
 
 QPushButton:hover
 {
-    background: #b71c1c;
+    background: #0094C5;
     color: white;
 }
 
 QLineEdit
 {
-    background: #eeeeee;
+    background: #2C2C2C;
     padding: 5px;
-    border: 2px solid #eeeeee;
+    border: 2px solid #2C2C2C;
 }
 
 #streakButton
@@ -83,7 +93,8 @@ QLineEdit
 
 QProgressBar
 {
-    background-color: #eeeeee;
+    background-color: #2C2C2C;
+    border: 0px solid black;
     font-size: 26px;
     margin-top: 30px;
     margin-bottom: 30px;
@@ -91,7 +102,7 @@ QProgressBar
 
 QProgressBar::chunk
 {
-    background-color: #1b5e20;
+    background-color: #39FF14;
 }
 
 #completedHabitsList::Item, #completedGoalsList::Item
@@ -102,9 +113,21 @@ QProgressBar::chunk
 QTableWidget
 {
     border: 0px;
+    gridline-color: #2C2C2C;
+}
+
+QTableView QTableCornerButton::section
+{
+    background: #0094C5;
+}
+
+QHeaderView::section
+{
+    background: #0094C5;
+    border: 0px;
 }
 
 QDialog
 {
-    background: white;
+    background: #121212;
 }

@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     container.setLayout(layout);
     container.setMinimumWidth(1000);
     container.setMinimumHeight(610);
-    QFontDatabase::addApplicationFont(":/resources/Roboto-Regular.ttf");
+    QFontDatabase::addApplicationFont(":/resources/Roboto-Medium.ttf");
 
     QTabWidget * parentWidget = new QTabWidget(&container);
     layout->addWidget(parentWidget);

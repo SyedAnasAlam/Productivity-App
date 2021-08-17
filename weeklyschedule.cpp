@@ -109,7 +109,7 @@ void WeeklySchedule::updateSchedule()
     int hour =  __dateTime->time().hour();
     if(hour >= DAY_START_HOUR && hour <= DAY_END_HOUR)
     {
-        __tableWidget->item(hour - DAY_START_HOUR, day - 1)->setBackground(QBrush(QColor(40, 95, 224)));
+        __tableWidget->item(hour - DAY_START_HOUR, day - 1)->setBackground(QBrush(QColor(57, 255, 20)));
         __tableWidget->item(hour - DAY_START_HOUR, day - 1)->setForeground(QBrush(Qt::white));
     }
 }
