@@ -6,7 +6,7 @@ A productivity app written in C++ using QT framework. The end goal is to have fo
 * [Impossible List](https://impossiblehq.com/impossible-list/)
 * List of upcoming events using Google Calender API
 
-![Screenshot](pics/demo.png?raw=true "Title")
+![Screenshot](https://imgur.com/zI7O3JL.png "Title")
 
 # Improvements and bugs 
 - [ ] List of upcoming events using Google Calender API
