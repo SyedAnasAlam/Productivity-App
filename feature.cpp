@@ -6,12 +6,12 @@
 #include "feature.h"
 
 
-Feature::Feature(const QString & databaseName) : __databasePath(QApplication::applicationDirPath() + "/Database/" + databaseName + ".json")
+Feature::Feature(const QString & databaseName) : __filePath(QString("%1%2.json").arg(__databasePath).arg(databaseName))
 {}
 
 bool Feature::m_openDatabase()
 {
-    QFile database(__databasePath);
+    QFile database(__filePath);
     bool ret = database.open(QIODevice::ReadOnly | QIODevice::Text);
     QString dataFileContent = database.readAll();
     database.close();
@@ -26,7 +26,7 @@ bool Feature::m_saveDatabase()
 {
     QJsonDocument jsonDataDoc(__database);
 
-    QFile file(__databasePath);
+    QFile file(__filePath);
     bool ret1 = file.open(QIODevice::WriteOnly | QIODevice::Text);
     qint64 ret2 = file.write(jsonDataDoc.toJson());
     file.close();

@@ -4,15 +4,25 @@
 #include <QApplication>
 #include <QFile>
 #include <QFontDatabase>
-
+#include <QStandardPaths>
+#include <QDir>
 #include "todolist.h"
 #include "habittracker.h"
 #include "weeklyschedule.h"
 #include "impossiblelist.h"
 
+QString Feature::__databasePath = "";
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setOrganizationName("SAA");
+    a.setApplicationName("Productivity-App");
+
+    Feature::__databasePath = QString("%1/%2/").arg(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)).arg(a.applicationName());
+    QDir databaseDir(Feature::__databasePath);
+    if(!databaseDir.exists())
+        databaseDir.mkdir(Feature::__databasePath);
 
     QWidget container;
     container.setObjectName("container");
