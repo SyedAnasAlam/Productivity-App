@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
     QVBoxLayout * layout = new QVBoxLayout();
     container.setLayout(layout);
     container.setMinimumWidth(1000);
-    container.setMinimumHeight(610);
+    container.setMinimumHeight(650);
     QFontDatabase::addApplicationFont(":/resources/Roboto-Medium.ttf");
 
     QTabWidget * parentWidget = new QTabWidget(&container);

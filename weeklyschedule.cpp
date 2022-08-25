@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QJsonObject>
 #include <QTimer>
+#include <QHeaderView>
 #include "weeklyschedule.h"
 
 WeeklySchedule::WeeklySchedule(QWidget * parent) : Feature("WeeklySchedule"), QWidget(parent)
@@ -36,6 +37,9 @@ void WeeklySchedule::v_display(QTabWidget * tabWidget)
 
     __tableWidget = new QTableWidget(DAY_END_HOUR - DAY_START_HOUR, 7, this);
     __tableWidget->setHorizontalHeaderLabels( {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"} );
+
+    QHeaderView * h = __tableWidget->horizontalHeader();
+    h->setSectionResizeMode(QHeaderView::Stretch);
 
     QStringList verticalHeaderLabels;
     for(int i = DAY_START_HOUR; i <= DAY_END_HOUR; i++)

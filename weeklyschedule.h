@@ -30,8 +30,8 @@ private:
     QVector<activity> __activities;
 
     QTableWidget * __tableWidget;
-    const int DAY_START_HOUR = 8;
-    const int DAY_END_HOUR = 20;
+    const int DAY_START_HOUR = 5;
+    const int DAY_END_HOUR = 22;
 
     QDateTime * __dateTime;
 
